@@ -38,7 +38,6 @@ const char path_image_happy_upperlid_left[] =  "/upperlid_happy_left.jpg";
 // eye_status ... 0: 通常, 1: 瞬き, 2: 驚き, 3: 眠い, 4: 怒る, 5: 悲しむ・困る, 6: 嬉しい...
 int eye_status = 0;
 int blink_level = 0; int max_blink_level = 6;
-
 int surprised_level = 0; int max_surprised_level = 16;
 int sleepy_level = 0; int max_sleepy_level = 10;
 int angry_level = 0; int max_angry_level = 20;
@@ -120,10 +119,10 @@ void loop()
   
   // float look_x = 0.3 * sin(i * 0.1);
   // float look_y = 0.3 * cos(i * 0.1) ;
-  
+
   if (eye_status == 0) {
     // 通常
-    eye.ready_for_normal_eye(path_image_iris_right, path_image_upperlid_right);
+	eye.ready_for_normal_eye(path_image_iris_right, path_image_upperlid_right);
     eye.update_look(look_x, look_y);
   } 
 
