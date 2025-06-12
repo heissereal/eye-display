@@ -8,6 +8,7 @@ import rospy
 
 from i2c_for_esp32 import WirePacker  # pip3 install i2c-for-esp32
 from std_msgs.msg import UInt16
+from std_msgs.msg import Float32
 
 I2C_SLAVE = 0x0703
 
@@ -42,8 +43,14 @@ class I2C:
       self.fr.close()
 
 
+
+
 i2c_right = I2C(device=0x42,bus=0)
 i2c_left = I2C(device=0x43,bus=5)
+
+eye_status = 0
+look_at = 0.0
+
 
 def send_eye_status(eye_status=0):
    sent_str = str(eye_status)
@@ -63,8 +70,17 @@ def send_eye_status(eye_status=0):
 def sub_eye_status_cb(msg):
    global eye_status
    eye_status = msg.data
-   send_eye_status(eye_status)
-   time.sleep(0.1)
+   print(eye_status)
+
+def sub_look_at_cb(msg):
+   global look_at
+   look_at = msg.data
+
+def eye(event):
+   if eye_status == 7:
+      send_eye_status(look_at)
+   else:
+      send_eye_status(eye_status)
 
 def sub_look_at_cb(msg):
    global look_at
@@ -78,12 +94,14 @@ if __name__ == '__main__':
    rospy.init_node('eye_status_to_I2C')
    rospy.Subscriber('/eye_status',UInt16,sub_eye_status_cb)
    rospy.Subscriber('/look_at',Float32,sub_look_at_cb)
+   rospy.Timer(rospy.Duration(0.1), eye)
    rospy.spin()
 
-
+# eye_status = 0
 # while True:
 #     eye_status += 1
 #     send_eye_status(eye_status)
 #     time.sleep(5.0)
 #     if eye_status > 6:
 #         eye_status = 0
+
