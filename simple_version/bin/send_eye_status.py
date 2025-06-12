@@ -19,8 +19,7 @@ else:
       return x.encode('latin-1')
 
 
-class I2C(object):
-
+class I2C:
    def __init__(self, device=0x42, bus=0):
       self.fr = io.open("/dev/i2c-"+str(bus), "rb", buffering=0)
       self.fw = io.open("/dev/i2c-"+str(bus), "wb", buffering=0)
@@ -43,8 +42,8 @@ class I2C(object):
       self.fr.close()
 
 
-i2c = I2C(bus=0)
-
+i2c_right = I2C(device=0x42,bus=0)
+i2c_left = I2C(device=0x43,bus=5)
 
 def send_eye_status(eye_status=0):
    sent_str = str(eye_status)
@@ -55,7 +54,8 @@ def send_eye_status(eye_status=0):
    if packer.available():
       packet = packer.buffer[:packer.available()]
       try:
-         i2c.write(packet)
+         i2c_right.write(packet)
+         i2c_left.write(packet)
       except OSError as e:
          print(e)
 
@@ -66,9 +66,18 @@ def sub_eye_status_cb(msg):
    send_eye_status(eye_status)
    time.sleep(0.1)
 
+def sub_look_at_cb(msg):
+   global look_at
+   look_at = msg.data
+   send_eye_status(look_at)
+   time.sleep(0.1)
+
+
+
 if __name__ == '__main__':
    rospy.init_node('eye_status_to_I2C')
    rospy.Subscriber('/eye_status',UInt16,sub_eye_status_cb)
+   rospy.Subscriber('/look_at',Float32,sub_look_at_cb)
    rospy.spin()
 
 
