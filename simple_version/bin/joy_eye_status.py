@@ -26,6 +26,8 @@ def joy_cb(msg):
             eye_status = 5
         elif msg.buttons[5] == 1:
             eye_status = 6
+        elif msg.buttons[6] == 1:
+            eye_status = 7
         else:
             eye_status = 0
     else:

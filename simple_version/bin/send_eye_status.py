@@ -52,8 +52,8 @@ eye_status = 0
 look_at = 0.0
 
 
-def send_eye_status(eye_status=0):
-   sent_str = str(eye_status)
+def send_eye_status(data):
+   sent_str = str(data)
    packer = WirePacker(buffer_size=len(sent_str) + 8)
    for s in sent_str:
       packer.write(ord(s))
@@ -70,11 +70,8 @@ def send_eye_status(eye_status=0):
 def sub_eye_status_cb(msg):
    global eye_status
    eye_status = msg.data
-   print(eye_status)
+   rospy.loginfo("eye_status: %d", eye_status)
 
-def sub_look_at_cb(msg):
-   global look_at
-   look_at = msg.data
 
 def eye(event):
    if eye_status == 7:
@@ -85,7 +82,7 @@ def eye(event):
 def sub_look_at_cb(msg):
    global look_at
    look_at = msg.data
-   send_eye_status(look_at)
+   rospy.loginfo("look_at: %f", look_at)
    time.sleep(0.1)
 
 
