@@ -50,10 +50,11 @@ i2c_left = I2C(device=0x43,bus=5)
 
 eye_status = 0
 look_at = 0.0
-
+switch_flag = True
 
 def send_eye_status(data):
    sent_str = str(data)
+   rospy.loginfo("sent_str: %s", sent_str)
    packer = WirePacker(buffer_size=len(sent_str) + 8)
    for s in sent_str:
       packer.write(ord(s))
@@ -68,22 +69,25 @@ def send_eye_status(data):
 
 
 def sub_eye_status_cb(msg):
-   global eye_status
+   global eye_status, switch_flag
    eye_status = msg.data
-   rospy.loginfo("eye_status: %d", eye_status)
+   if eye_status > 0:
+      switch_flag = True
+      if eye_status == 7:
+         switch_flag = False
 
 
 def eye(event):
-   if eye_status == 7:
-      send_eye_status(look_at)
-   else:
+   if switch_flag:
       send_eye_status(eye_status)
+   else:
+      send_eye_status(look_at)
 
 def sub_look_at_cb(msg):
    global look_at
    look_at = msg.data
-   rospy.loginfo("look_at: %f", look_at)
-   time.sleep(0.1)
+   # rospy.loginfo("look_at: %f", look_at)
+   # time.sleep(0.1)
 
 
 
