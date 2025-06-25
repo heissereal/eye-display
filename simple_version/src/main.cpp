@@ -106,8 +106,8 @@ void loop()
 
   // float look_x = 2. * sin(i * 0.1);
   // float look_y = 2. * cos(i * 0.1) - 2.;
-  float look_x = 0.3 * sin(i * 0.1);
-  float look_y = 0.3 * cos(i * 0.1) ;
+  //float look_x = 0.3 * sin(i * 0.1);
+  //float look_y = 0.3 * cos(i * 0.1) ;
 
   if (eye_status == 0) {
     // 通常
@@ -190,7 +190,6 @@ void loop()
   eye.draw_updated_image();
 }
 
-
 void receiveEvent(int howMany) {
   // lastReceiveTime = millis();  // Update the last received time
   String str;
@@ -198,11 +197,13 @@ void receiveEvent(int howMany) {
     char c = WireSlave.read();  // receive byte as a character
     str += c;
   }
-  if (str == "0") {eye_status = 0;}
-  if (str == "1") {eye_status = 1;}
-  if (str == "2") {eye_status = 2;}
-  if (str == "3") {eye_status = 3;}
-  if (str == "4") {eye_status = 4;}
-  if (str == "5") {eye_status = 5;}
-  if (str == "5") {eye_status = 6;}
+  if (str.length() == 1 && isDigit(str[0])) {
+    int val = str.toInt();
+    if (val >= 0 && val <= 6) {
+      look_x = 0.0;
+      eye_status = val;// 0: 通常, 1: 瞬き, 2: 驚き, 3: 眠い, 4: 怒る, 5: 悲しむ・困る, 6: 嬉しい
+    }
+  }else{
+    look_x = str.toFloat();
+  }
 }
