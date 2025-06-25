@@ -38,9 +38,13 @@ int happy_level = 0; int max_happy_level = 20;
 
 static Eye eye;
 
+float look_x = 0.0; // 目の動き
+float look_y = 0.0; // 目の動き
+
 constexpr int SDA_PIN = 8; //design pin number
 constexpr int SCL_PIN = 9;
-constexpr int I2C_SLAVE_ADDR = 0x42; //I2C slave address
+// constexpr int I2C_SLAVE_ADDR = 0x43; //I2C slave address left
+constexpr int I2C_SLAVE_ADDR = 0x42; //I2C slave address right
 
 void receiveEvent(int howMany); //callback
 
@@ -73,6 +77,7 @@ void setup()
 
   delay(5000);
 
+  // String mode = "right";
   String mode = "right";
   if (mode == "right")
   {
@@ -82,7 +87,6 @@ void setup()
   }
   else
   {
-    // eye.init(path_image_eyeball, path_image_iris_left, path_image_upperlid_left, image_width, image_height, 5);
     eye.init(path_image_eyeball, path_image_iris_right,  path_image_upperlid_right, image_width, image_height, 5);
   }
 
